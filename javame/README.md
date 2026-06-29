@@ -4,6 +4,24 @@ The companion application that runs on the feature phone (MIDP 2.0 / CLDC 1.1).
 It is intentionally **small and dumb**: it renders what Android sends and sends
 back simple commands. All intelligence lives on the Android side.
 
+## Device compatibility
+
+The client needs a phone that exposes **JSR-82** (the `javax.bluetooth` API) to
+MIDlets — not just Bluetooth hardware. Many feature phones have Bluetooth for
+headsets/file transfer but do **not** expose it to Java. Run the diagnostic
+probe (below) to check: if it shows `bluetooth.api: (none)`, the device cannot
+be a companion.
+
+Known results:
+
+| Device | Runs MIDlets | JSR-82 | Usable as companion |
+|--------|--------------|--------|---------------------|
+| Nokia 3310 3G (2017, Series 30+) | Yes (class version ≤ 47) | **No** | **No** |
+| Series 40 2nd ed.+ / Asha (e.g. 6300, C3-00, X2-00, Asha 302/305) | Yes | Usually yes | Yes |
+| Many Sony Ericsson (e.g. K-series, W-series) | Yes | Usually yes | Yes |
+
+When sourcing a handset, confirm "JSR-82 / Bluetooth API" in its Java spec.
+
 ## Design constraints
 
 Java ME is a constrained environment, and every decision here is shaped by it:
