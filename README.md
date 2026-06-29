@@ -91,13 +91,16 @@ begins.
 
 ### Building
 
-**Android** (`android/`) — a standard multi-module Gradle project. With the
-Android SDK installed:
+All commands below are written to run **from the repository root** (the
+subshells keep your working directory there).
+
+**Android** (`android/`) — a standard multi-module Gradle project. The build
+targets JVM 17; any JDK 17 or newer (e.g. 21) can run it. With the Android SDK
+installed:
 
 ```
-cd android
-./gradlew :protocol:test     # pure-JVM codec tests (no SDK needed)
-./gradlew :app:assembleDebug # build the APK (requires the Android SDK)
+( cd android && ./gradlew :protocol:test )      # pure-JVM codec tests (no SDK)
+( cd android && ./gradlew :app:assembleDebug )  # build the APK (needs the SDK)
 ```
 
 The `core` and `protocol` modules are pure-JVM Kotlin libraries, so the
@@ -107,17 +110,15 @@ protocol codec is unit-tested without an emulator.
 `javame/build.xml`):
 
 ```
-cd javame
-ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar
+( cd javame && ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar )
 ```
 
 The `protocol` package is CLDC-safe plain Java and can be compiled and tested
 with a normal JDK:
 
 ```
-cd javame
-javac -d build/test src/protocol/*.java test/protocol/*.java
-java -cp build/test protocol.ProtocolTest
+( cd javame && javac -d build/test src/protocol/*.java test/protocol/*.java \
+    && java -cp build/test protocol.ProtocolTest )
 ```
 
 ---
