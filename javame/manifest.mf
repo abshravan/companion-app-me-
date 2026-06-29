@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 MIDlet-1: RelayME, , ui.RelayMidlet
+MIDlet-2: RelayME Probe, , ui.ProbeMidlet
 MIDlet-Name: RelayME
 MIDlet-Vendor: RelayME Project
 MIDlet-Version: 0.2.0

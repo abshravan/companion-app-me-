@@ -53,8 +53,20 @@ How it works:
 | Downgrade class version to 48 (Java 1.4) | ProGuard `-target 1.4`, for old KVMs |
 
 The stub jars are the device's own platform; they are **not** bundled — only our
-ten classes ship. Copy `build/dist/RelayME.jad` + `RelayME.jar` to the phone to
+own classes ship. Copy `build/dist/RelayME.jad` + `RelayME.jar` to the phone to
 install.
+
+### Diagnostic probe
+
+`assemble` also builds a standalone **`RelayME-Probe.jar`** (or run `./gradlew
+probe`). It contains a single MIDlet that references only `java.lang` + LCDUI —
+no `javax.bluetooth` — so it installs and runs on *any* MIDP 2.0 device and
+prints the device's CLDC/MIDP version and whether JSR-82 is present.
+
+Use it when the full app fails to start (e.g. `NoClassDefFoundError`): if the
+probe shows `bluetooth.api: (none)`, the device lacks the JSR-82 Bluetooth API
+and cannot be a RelayME companion. The same MIDlet is also available as
+"RelayME Probe" (MIDlet-2) inside the main suite.
 
 ### Legacy alternative: Antenna + WTK
 

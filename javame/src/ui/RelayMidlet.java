@@ -4,6 +4,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 
 import bluetooth.BtClient;
+import bluetooth.ConnectionListener;
 import protocol.Message;
 import protocol.ProtocolCodec;
 
@@ -21,25 +22,36 @@ import protocol.ProtocolCodec;
  * "Hello Android".
  */
 public final class RelayMidlet extends MIDlet
-        implements HomeScreen.Controller, BtClient.Listener {
+        implements HomeScreen.Controller, ConnectionListener {
 
     private Display display;
     private HomeScreen home;
+    // Created lazily, only once JSR-82 is confirmed present (see onConnectRequested).
+    // Constructing it earlier would load javax.bluetooth classes and crash with
+    // NoClassDefFoundError on devices that lack the optional package.
     private BtClient client;
 
     protected void startApp() {
         if (display == null) {
             display = Display.getDisplay(this);
             home = new HomeScreen(this);
-            client = new BtClient(this);
         }
         display.setCurrent(home.getDisplayable());
 
-        if (BtClient.isBluetoothAvailable()) {
+        if (bluetoothAvailable()) {
             home.setStatus("Ready. Press Connect to reach your phone.");
         } else {
             home.setStatus("This phone has no Java Bluetooth (JSR-82) support.");
         }
+    }
+
+    /**
+     * @return true if the optional JSR-82 package is present. This only reads a
+     *         system property — it must NOT touch {@link BtClient}, because doing
+     *         so would load {@code javax.bluetooth} and defeat the whole point.
+     */
+    private boolean bluetoothAvailable() {
+        return System.getProperty("bluetooth.api.version") != null;
     }
 
     protected void pauseApp() {
@@ -55,9 +67,13 @@ public final class RelayMidlet extends MIDlet
     // ---- HomeScreen.Controller (UI thread) ----
 
     public void onConnectRequested() {
-        if (!BtClient.isBluetoothAvailable()) {
+        if (!bluetoothAvailable()) {
             home.setStatus("Bluetooth not available on this device.");
             return;
+        }
+        // First use of BtClient — safe now that JSR-82 is confirmed present.
+        if (client == null) {
+            client = new BtClient(this);
         }
         home.setStatus("Searching for RelayME server…");
         client.start();

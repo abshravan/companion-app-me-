@@ -29,30 +29,22 @@ import javax.bluetooth.UUID;
  */
 public final class BtClient {
 
-    /** Callbacks are delivered on the client's reader thread, not the UI thread. */
-    public interface Listener {
-        void onConnected();
-        void onLineReceived(String line);
-        void onDisconnected();
-        void onError(String message);
-    }
-
     /** Well-known Serial Port Profile UUID (16-bit 0x1101), per spec §6. */
     private static final UUID SPP_UUID = new UUID("1101", true);
 
-    private final Listener listener;
+    private final ConnectionListener listener;
 
     private Thread worker;
     private LineConnection link;
     private volatile boolean running;
 
-    public BtClient(Listener listener) {
+    /**
+     * Construct the client. <b>Only instantiate this after confirming JSR-82 is
+     * present</b> (see {@code RelayMidlet}); creating it loads {@code javax.bluetooth}
+     * classes, which do not exist on devices lacking the optional package.
+     */
+    public BtClient(ConnectionListener listener) {
         this.listener = listener;
-    }
-
-    /** @return true if this device implements the optional JSR-82 package. */
-    public static boolean isBluetoothAvailable() {
-        return System.getProperty("bluetooth.api.version") != null;
     }
 
     /** Start discovery + connection on a background thread. Idempotent. */
