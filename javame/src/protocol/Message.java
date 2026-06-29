@@ -42,14 +42,16 @@ public final class Message {
         return value != null ? value : def;
     }
 
-    /** @return the integer value for {@code key}, or {@code def} if absent/invalid. */
+    /**
+     * @return the integer value for {@code key}, or {@code def} if absent.
+     *
+     * {@link Json} returns every number as a {@link Long} (no {@code Double},
+     * which is absent on CLDC 1.0), so only that case is handled here.
+     */
     public int getInt(String key, int def) {
         Object value = fields.get(key);
         if (value instanceof Long) {
             return (int) ((Long) value).longValue();
-        }
-        if (value instanceof Double) {
-            return (int) ((Double) value).doubleValue();
         }
         return def;
     }

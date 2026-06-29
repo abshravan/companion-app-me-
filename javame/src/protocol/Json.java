@@ -16,10 +16,14 @@ import java.util.Vector;
  *   - StringBuffer instead of StringBuilder
  *   - java.util.Hashtable / Vector instead of the Collections framework
  *
- * Parsed objects are Hashtables. Values are String, Boolean, Long (integral
- * numbers), Double (fractional numbers), Hashtable (nested object) or Vector
- * (array). JSON null values are dropped (a Hashtable cannot store null), which
- * matches the spec's "missing field -> use default" rule.
+ * Parsed objects are Hashtables. Values are String, Boolean, Long (numbers —
+ * see {@link #parseNumber()}), Hashtable (nested object) or Vector (array). JSON
+ * null values are dropped (a Hashtable cannot store null), which matches the
+ * spec's "missing field -> use default" rule.
+ *
+ * Numbers are always returned as {@link Long}: CLDC 1.0 has no {@code Double},
+ * and the protocol only uses integer fields, so avoiding floating point keeps
+ * the client loadable on the widest range of devices.
  */
 public final class Json {
 
@@ -236,31 +240,46 @@ public final class Json {
         i += 4;
     }
 
+    /**
+     * Parse a JSON number and return it as a {@link Long}.
+     *
+     * CLDC 1.0 has no {@code java.lang.Double}, and referencing it would make the
+     * whole class fail to load on such a device ({@code NoClassDefFoundError}).
+     * The protocol only uses integer fields (version, battery level, timestamps),
+     * so the full numeric token is consumed (to keep framing intact) but only its
+     * integer part is converted; any fraction/exponent is discarded.
+     */
     private Object parseNumber() {
         int start = i;
-        boolean fractional = false;
         if (peek() == '-') {
             i++;
         }
+        int intEnd = -1; // first index of '.', 'e' or 'E' — where the integer part ends
         while (i < s.length()) {
             char c = s.charAt(i);
             if (c >= '0' && c <= '9') {
                 i++;
             } else if (c == '.' || c == 'e' || c == 'E' || c == '+' || c == '-') {
-                fractional = true;
+                if (intEnd == -1 && (c == '.' || c == 'e' || c == 'E')) {
+                    intEnd = i;
+                }
                 i++;
             } else {
                 break;
             }
         }
-        String num = s.substring(start, i);
-        if (num.length() == 0) {
+        if (i == start) {
             throw new RuntimeException("bad number");
         }
-        if (fractional) {
-            return new Double(Double.parseDouble(num));
+        String intPart = s.substring(start, intEnd == -1 ? i : intEnd);
+        if (intPart.length() == 0 || intPart.equals("-")) {
+            return new Long(0L);
         }
-        return new Long(Long.parseLong(num));
+        try {
+            return new Long(Long.parseLong(intPart));
+        } catch (NumberFormatException e) {
+            return new Long(0L);
+        }
     }
 
     private char peek() {

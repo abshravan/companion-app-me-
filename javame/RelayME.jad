@@ -3,7 +3,7 @@ MIDlet-2: RelayME Probe, , ui.ProbeMidlet
 MIDlet-Name: RelayME
 MIDlet-Vendor: RelayME Project
 MIDlet-Version: 0.2.0
-MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Configuration: CLDC-1.0
 MicroEdition-Profile: MIDP-2.0
 MIDlet-Description: Companion client for Android (Milestone 2: handshake)
 MIDlet-Jar-URL: RelayME.jar
