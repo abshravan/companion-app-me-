@@ -59,5 +59,12 @@ Four isolated packages matching the documented layout:
 
 - Android protocol codec: `./gradlew :protocol:test` → 12 tests pass.
 - Java ME protocol: `javac`/`java` on `protocol` + `test/protocol` → 26 checks pass.
-- Bluetooth/UI/service layers depend on the Android SDK / WTK and are verified by
-  building in those environments (see the module READMEs).
+- **Full Java ME app** (UI + JSR-82 Bluetooth + protocol): `./gradlew assemble`
+  compiles, preverifies (ProGuard `-microedition`), and packages a class-version-48
+  `RelayME.jar` + `RelayME.jad` — all from Maven Central, no Wireless Toolkit.
+- The Android Bluetooth/UI/service layers depend on the Android SDK and are built
+  with `:app:assembleDebug` once the SDK is installed.
+
+> Note: the Java ME build uses Maven-hosted CLDC/MIDP/JSR-82 stubs (`microemu`,
+> `bluecove`) instead of the legacy WTK, so it runs on a modern JDK 17+. See
+> `javame/README.md`.

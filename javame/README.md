@@ -29,18 +29,41 @@ javame/src/
 Concerns are kept apart: Bluetooth code knows nothing about screens, the parser
 knows nothing about RMS, and the UI knows nothing about sockets.
 
-## Build
+## Build (recommended: Gradle, no Wireless Toolkit)
 
 Java ME needs three steps a desktop JDK cannot do alone: compile against the
-CLDC 1.1 / MIDP 2.0 / JSR-82 stubs, *preverify*, then package into a JAR + JAD.
-`build.xml` drives this with [Antenna](https://antenna.sourceforge.net) and a
-Wireless Toolkit (Sun WTK 2.5.2 or the Nokia Series 40 SDK):
+CLDC 1.1 / MIDP 2.0 / JSR-82 APIs, *preverify*, then package into a JAR + JAD.
+The classic Sun WTK + Antenna toolchain drags in 32-bit native binaries and an
+ancient JDK that no longer install cleanly on modern Linux.
+
+`build.gradle.kts` avoids all of that — every dependency comes from Maven
+Central and it runs on a normal JDK 17+:
+
+```
+./gradlew assemble        # -> build/dist/RelayME.jar + RelayME.jad
+```
+
+How it works:
+
+| Step | Tool (from Maven Central) |
+|------|---------------------------|
+| Compile against CLDC/MIDP | `org.microemu:microemu-cldc`, `microemu-midp` |
+| Compile against JSR-82 (`javax.bluetooth`) | `net.sf.bluecove:bluecove` |
+| **Preverify** (adds the CLDC StackMap) | `net.sf.proguard:proguard-base` in `-microedition` mode |
+| Downgrade class version to 48 (Java 1.4) | ProGuard `-target 1.4`, for old KVMs |
+
+The stub jars are the device's own platform; they are **not** bundled — only our
+ten classes ship. Copy `build/dist/RelayME.jad` + `RelayME.jar` to the phone to
+install.
+
+### Legacy alternative: Antenna + WTK
+
+`build.xml` still drives the traditional [Antenna](https://antenna.sourceforge.net)
++ Wireless Toolkit route for anyone who already has a WTK installed:
 
 ```
 ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar
 ```
-
-The output (`dist/RelayME.jad` + `RelayME.jar`) is installed onto the phone.
 
 ### Testing the protocol on a desktop JDK
 

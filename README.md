@@ -106,12 +106,16 @@ installed:
 The `core` and `protocol` modules are pure-JVM Kotlin libraries, so the
 protocol codec is unit-tested without an emulator.
 
-**Java ME** (`javame/`) — built with Antenna + a Wireless Toolkit (see
-`javame/build.xml`):
+**Java ME** (`javame/`) — built with Gradle, **no Wireless Toolkit required**.
+The CLDC/MIDP/JSR-82 API stubs and the preverifier all come from Maven Central,
+so it runs on a normal JDK 17+:
 
 ```
-( cd javame && ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar )
+( cd javame && ./gradlew assemble )   # -> build/dist/RelayME.jar + RelayME.jad
 ```
+
+(See `javame/README.md` for how the WTK-free build works, and the legacy
+Antenna + WTK alternative.)
 
 The `protocol` package is CLDC-safe plain Java and can be compiled and tested
 with a normal JDK:

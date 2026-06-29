@@ -1,9 +1,10 @@
 # ──────────────────────────────────────────────────────────────
-# Android / Gradle
+# Gradle (Android and Java ME)
 # ──────────────────────────────────────────────────────────────
-android/.gradle/
+.gradle/
 android/build/
 android/*/build/
+javame/build/
 android/local.properties
 android/.idea/
 android/captures/

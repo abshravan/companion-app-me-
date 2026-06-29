@@ -261,14 +261,11 @@ print_summary() {
     sdptool browse <PHONE_MAC>   # find the "RelayME" channel
     python3 $REPO_ROOT/tools/spp_test_client.py <PHONE_MAC> <channel>
 
-  Java ME build (manual — the Wireless Toolkit is not freely downloadable):
-    Ant is installed. You still need a WTK (Sun WTK 2.5.2 or Nokia S40 SDK)
-    for the CLDC/MIDP/JSR-82 API jars and the 'preverify' binary, plus
-    antenna-bin.jar. Then:
-      cd $REPO_ROOT/javame
-      ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar
-    Install dist/RelayME.jad on the phone and launch it; the Home screen
-    reports whether the device exposes JSR-82.
+  Java ME build (no Wireless Toolkit needed — all deps from Maven Central):
+    cd $REPO_ROOT/javame
+    ./gradlew assemble            # -> build/dist/RelayME.jar + RelayME.jad
+    Copy build/dist/RelayME.jad + RelayME.jar to the phone, install, and
+    launch; the Home screen reports whether the device exposes JSR-82.
 
 EOF
 }
