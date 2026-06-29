@@ -18,9 +18,16 @@ android/captures/
 javame/build/
 javame/bin/
 javame/dist/
-*.jar
-*.jad
 *.class
+# Built MIDlet artifacts (the source RelayME.jad descriptor IS tracked).
+javame/dist/*.jar
+javame/dist/*.jad
+
+# ──────────────────────────────────────────────────────────────
+# Keep the Gradle wrapper jar (it must be committed)
+# ──────────────────────────────────────────────────────────────
+!gradle-wrapper.jar
+!android/gradle/wrapper/gradle-wrapper.jar
 
 # ──────────────────────────────────────────────────────────────
 # IDE / editor

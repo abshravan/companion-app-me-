@@ -31,6 +31,26 @@ knows nothing about RMS, and the UI knows nothing about sockets.
 
 ## Build
 
-A build setup (MIDlet packaging into `.jad`/`.jar`) will be added in
-**Milestone 2**, alongside the first Bluetooth handshake code. This milestone
-establishes structure and the shared protocol only.
+Java ME needs three steps a desktop JDK cannot do alone: compile against the
+CLDC 1.1 / MIDP 2.0 / JSR-82 stubs, *preverify*, then package into a JAR + JAD.
+`build.xml` drives this with [Antenna](https://antenna.sourceforge.net) and a
+Wireless Toolkit (Sun WTK 2.5.2 or the Nokia Series 40 SDK):
+
+```
+ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar
+```
+
+The output (`dist/RelayME.jad` + `RelayME.jar`) is installed onto the phone.
+
+### Testing the protocol on a desktop JDK
+
+The `protocol` package uses only CLDC-safe APIs (no `javax.microedition`), so it
+compiles and runs on a normal JDK for fast feedback:
+
+```
+javac -d build/test src/protocol/*.java test/protocol/*.java
+java -cp build/test protocol.ProtocolTest
+```
+
+The `bluetooth` and `ui` packages depend on JSR-82 / LCDUI and only build inside
+the WTK.

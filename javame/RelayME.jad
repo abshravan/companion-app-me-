@@ -1,0 +1,10 @@
+MIDlet-1: RelayME, , ui.RelayMidlet
+MIDlet-Name: RelayME
+MIDlet-Vendor: RelayME Project
+MIDlet-Version: 0.2.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Description: Companion client for Android (Milestone 2: handshake)
+MIDlet-Jar-URL: RelayME.jar
+MIDlet-Jar-Size: 0
+MIDlet-Permissions: javax.microedition.io.Connector.bluetooth.client, javax.microedition.io.Connector.bluetooth.server

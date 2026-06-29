@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RelayME Java ME build.
+
+  Java ME is built in three steps that a normal JDK cannot do alone:
+    1. compile against the CLDC 1.1 + MIDP 2.0 + JSR-82 stub libraries
+       (NOT the desktop JRE),
+    2. *preverify* the classes (a CLDC requirement),
+    3. package into a JAR + JAD.
+
+  This build uses Antenna (https://antenna.sourceforge.net), the de-facto Ant
+  toolkit for MIDlets, together with a Wireless Toolkit (Sun WTK 2.5.2 or the
+  Nokia Series 40 SDK). Set the two properties below for your machine, e.g.:
+
+      ant -Dwtk.home=/opt/WTK2.5.2 -Dantenna.jar=/opt/antenna/antenna-bin.jar
+
+  The protocol package is plain CLDC-safe Java and can also be unit-tested with
+  a normal JDK; see ../README and javame/test.
+-->
+<project name="RelayME" default="dist" basedir=".">
+
+    <property name="wtk.home" location="/opt/WTK2.5.2"/>
+    <property name="antenna.jar" location="/opt/antenna/antenna-bin.jar"/>
+
+    <property name="src.dir" location="src"/>
+    <property name="build.dir" location="build"/>
+    <property name="classes.dir" location="${build.dir}/classes"/>
+    <property name="dist.dir" location="dist"/>
+
+    <taskdef resource="antenna.properties" classpath="${antenna.jar}"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile + preverify against the CLDC/MIDP/JSR-82 APIs from the WTK. -->
+    <target name="compile" depends="init">
+        <wtkbuild srcdir="${src.dir}"
+                  destdir="${classes.dir}"
+                  preverify="true"
+                  source="1.3"
+                  target="1.3"/>
+    </target>
+
+    <!-- Package the JAR and synchronise the JAD (size, etc.). -->
+    <target name="dist" depends="compile">
+        <wtkpackage jarfile="${dist.dir}/RelayME.jar"
+                    jadfile="${dist.dir}/RelayME.jad"
+                    manifest="manifest.mf"
+                    classpath="${classes.dir}">
+            <fileset dir="${classes.dir}"/>
+        </wtkpackage>
+    </target>
+
+</project>

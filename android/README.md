@@ -31,6 +31,18 @@ nothing Android-specific.
 
 ## Build
 
-A Gradle project will be added in **Milestone 2**, when the first real code (the
-Bluetooth handshake server) lands. This milestone establishes structure and the
-shared protocol only.
+Standard multi-module Gradle project (wrapper included). With the Android SDK
+installed and `local.properties` pointing at it (`sdk.dir=...`):
+
+```
+./gradlew :app:assembleDebug   # build the APK
+./gradlew :protocol:test       # run codec unit tests (pure JVM, no SDK)
+```
+
+`core` and `protocol` are pure-JVM Kotlin libraries (they apply only the Kotlin
+JVM plugin), so their logic is testable without an emulator. `bluetooth` and
+`app` are Android modules and require the SDK to build.
+
+> As of Milestone 2 the modules present are `app`, `core`, `bluetooth`, and
+> `protocol`. `notifications` and `media` are documented here but land in their
+> own milestones (4 and 6).

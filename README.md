@@ -76,8 +76,8 @@ versioning, and robustness rules — lives in
 | #  | Goal                                                        | Status      |
 |----|-------------------------------------------------------------|-------------|
 | 1  | Repository setup & shared protocol documentation           | ✅ Done     |
-| 2  | Bluetooth handshake: exchange `Hello Android` / `Hello Java`| ⏳ Next     |
-| 3  | Automatic reconnect                                         | ⬜ Planned  |
+| 2  | Bluetooth handshake: exchange `Hello Android` / `Hello Java`| ✅ Done     |
+| 3  | Automatic reconnect                                         | ⏳ Next     |
 | 4  | Notification bridge                                         | ⬜ Planned  |
 | 5  | Incoming call screen                                        | ⬜ Planned  |
 | 6  | Music controls                                             | ⬜ Planned  |
@@ -88,6 +88,37 @@ versioning, and robustness rules — lives in
 
 Development is **incremental**: each milestone must compile before the next
 begins.
+
+### Building
+
+**Android** (`android/`) — a standard multi-module Gradle project. With the
+Android SDK installed:
+
+```
+cd android
+./gradlew :protocol:test     # pure-JVM codec tests (no SDK needed)
+./gradlew :app:assembleDebug # build the APK (requires the Android SDK)
+```
+
+The `core` and `protocol` modules are pure-JVM Kotlin libraries, so the
+protocol codec is unit-tested without an emulator.
+
+**Java ME** (`javame/`) — built with Antenna + a Wireless Toolkit (see
+`javame/build.xml`):
+
+```
+cd javame
+ant -Dwtk.home=/path/to/WTK -Dantenna.jar=/path/to/antenna-bin.jar
+```
+
+The `protocol` package is CLDC-safe plain Java and can be compiled and tested
+with a normal JDK:
+
+```
+cd javame
+javac -d build/test src/protocol/*.java test/protocol/*.java
+java -cp build/test protocol.ProtocolTest
+```
 
 ---
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RelayME</string>
+    <string name="start">Start link</string>
+    <string name="stop">Stop link</string>
+    <string name="channel_link_status">Link status</string>
+    <string name="notif_running">Companion link running</string>
+    <string name="status_permission_denied">Bluetooth permission is required to run the link.</string>
+    <string name="status_hint">Press “Start link”, then connect from the Java ME phone.</string>
+</resources>
