@@ -68,6 +68,19 @@ probe shows `bluetooth.api: (none)`, the device lacks the JSR-82 Bluetooth API
 and cannot be a RelayME companion. The same MIDlet is also available as
 "RelayME Probe" (MIDlet-2) inside the main suite.
 
+### Troubleshooting: `NoClassDefFoundError` on launch
+
+If even the probe fails with `NoClassDefFoundError` on a phone that runs other
+MIDlets, the device's KVM is likely rejecting the class-file version. Old
+Esmertec Jbed VMs (Series 30+) often accept only version 47 or lower. The build
+emits version 47 by default; if needed, go lower:
+
+```
+./gradlew assemble -PmidpTarget=1.2   # class version 46
+```
+
+(`1.4` → 48, `1.3` → 47, `1.2` → 46.)
+
 ### Legacy alternative: Antenna + WTK
 
 `build.xml` still drives the traditional [Antenna](https://antenna.sourceforge.net)

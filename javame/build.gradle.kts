@@ -37,22 +37,30 @@ dependencies {
 
 val distDir = layout.buildDirectory.dir("dist")
 
+// Class-file version to emit, expressed as a Java target. Old Esmertec Jbed VMs
+// (e.g. Nokia Series 30+) reject class versions above 47, reporting it as
+// NoClassDefFoundError, so the default matches what CLDC-1.0 devices and the era's
+// commercial MIDlets use:
+//   1.4 -> 48,  1.3 -> 47 (default),  1.2 -> 46
+// Override per device if needed:  ./gradlew assemble -PmidpTarget=1.2
+val midpTarget: String = (findProperty("midpTarget") as String?) ?: "1.3"
+
 // ProGuard arguments shared by every preverify step. `-microedition` emits the
-// CLDC StackMap; `-target 1.4` downgrades to class version 48 for old KVMs
-// (e.g. Esmertec Jbed on Series 30+). No shrinking/optimising/obfuscating —
-// this is a pure preverifier here.
+// CLDC StackMap; `-target` downgrades the class version. No shrinking/optimising/
+// obfuscating — ProGuard is used purely as a preverifier here. We do NOT keep the
+// Java-6 StackMapTable attribute (no `-keepattributes *`): only the CLDC StackMap
+// that `-microedition` produces is valid in these old class files.
 fun proguardArgs(inDir: java.io.File, outDir: java.io.File): List<String> = listOf(
     "-injars", inDir.absolutePath,
     "-outjars", outDir.absolutePath,
     "-libraryjars", midpApi.asPath,
     "-microedition",
-    "-target", "1.4",
+    "-target", midpTarget,
     "-dontshrink",
     "-dontoptimize",
     "-dontobfuscate",
     "-dontnote",
     "-dontwarn",
-    "-keepattributes", "*",
     "-keep", "class ** { *; }",
 )
 
