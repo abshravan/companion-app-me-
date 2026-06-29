@@ -3,17 +3,18 @@
 Helper utilities for testing RelayME during development. Not part of either
 shipped application.
 
-## `setup-void.sh`
+## `setup-linux.sh`
 
-One-shot development environment setup for **Void Linux** (bare metal). It
-installs JDK 17, `adb`, BlueZ, Ant and Python, enables the `dbus` + `bluetoothd`
-runit services, installs the Android SDK, writes `android/local.properties`, and
-runs the protocol logic tests. Idempotent.
+One-shot development environment setup for **Linux**. It auto-detects the distro
+and supports **Void** (xbps + runit) and **Debian/Ubuntu** (apt + systemd). It
+installs JDK 17, `adb`, BlueZ, Ant and Python, enables the Bluetooth services,
+installs the Android SDK, writes `android/local.properties`, and runs the
+protocol logic tests. Idempotent.
 
 ```sh
-tools/setup-void.sh                 # full setup
-tools/setup-void.sh --no-android    # e.g. skip the SDK
-tools/setup-void.sh --help          # all options
+tools/setup-linux.sh                 # full setup
+tools/setup-linux.sh --no-android    # e.g. skip the SDK
+tools/setup-linux.sh --help          # all options
 ```
 
 The Java ME device toolchain (Wireless Toolkit) is not freely downloadable, so
